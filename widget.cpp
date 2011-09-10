@@ -19,7 +19,7 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    _progressDialog = new QProgressDialog("Operation in progress.", "Cancel", 0, 0, this);
+    _progressDialog = new QProgressDialog("Operation in progress.", "Print now!", 0, 0, this);
     _thread = new EndpaperThread(this);
 
     connexions();
