@@ -57,7 +57,7 @@ void Widget::cancel()
 
 void Widget::threadprogress(int value)
 {
-    _progressDialog->setLabelText(QString("Operation in progress: %1").arg(value));
+    _progressDialog->setLabelText(QString("Operation in progress: %1 words").arg(value));
 }
 
 void Widget::finish()
@@ -84,9 +84,9 @@ void Widget::loaddef()
     ui->textLineEdit->setText(set.value("text", "Title").toString());
     ui->fontComboBox->setFont(QFont(set.value("font").toString()));
     ui->sizeMinDoubleSpinBox->setValue(set.value("sizemin", 10).toDouble());
-    ui->sizeMaxDoubleSpinBox->setValue(set.value("sizemax", 60).toDouble());
-    ui->angleMinDoubleSpinBox->setValue(set.value("anglemin", -45).toDouble());
-    ui->angleMaxDoubleSpinBox->setValue(set.value("anglemax", 45).toDouble());
+    ui->sizeMaxDoubleSpinBox->setValue(set.value("sizemax", 50).toDouble());
+    ui->angleMinDoubleSpinBox->setValue(set.value("anglemin", -70).toDouble());
+    ui->angleMaxDoubleSpinBox->setValue(set.value("anglemax", 70).toDouble());
 }
 
 void Widget::savedef()

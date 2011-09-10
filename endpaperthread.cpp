@@ -18,6 +18,8 @@ void EndpaperThread::run()
 {
     QRectF pageRect = _printer->pageRect();
     QGraphicsScene scene(pageRect);
+    pageRect.setTop(pageRect.top() - pageRect.height() * 0.2);
+    pageRect.setLeft(pageRect.left() - pageRect.width() * 0.2);
 
 
     QGraphicsTextItem *item;
