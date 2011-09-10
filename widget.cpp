@@ -45,7 +45,7 @@ void Widget::print()
         _progressDialog->show();
 
         // start thread...
-        _thread->start(&_printer, &_painter, ui->textLineEdit->text(), ui->fontComboBox->font(), ui->colorPushButton->text(),
+        _thread->start(&_printer, &_painter, ui->textLineEdit->text(), ui->fontComboBox->currentFont(), ui->colorPushButton->text(),
                        ui->sizeMinDoubleSpinBox->value(), ui->sizeMaxDoubleSpinBox->value(),
                        ui->angleMinDoubleSpinBox->value(), ui->angleMaxDoubleSpinBox->value());
     }
@@ -84,7 +84,7 @@ void Widget::loaddef()
     setGeometry(set.value("geo").toRect());
 
     ui->textLineEdit->setText(set.value("text", "Title").toString());
-    ui->fontComboBox->setFont(QFont(set.value("font").toString()));
+    ui->fontComboBox->setCurrentFont(QFont(set.value("font").toString()));
     ui->colorPushButton->setText(set.value("color", "#000000").toString());
     ui->sizeMinDoubleSpinBox->setValue(set.value("sizemin", 10).toDouble());
     ui->sizeMaxDoubleSpinBox->setValue(set.value("sizemax", 50).toDouble());
@@ -99,7 +99,7 @@ void Widget::savedef()
     set.setValue("geo", geometry());
 
     set.setValue("text", ui->textLineEdit->text());
-    set.setValue("font", ui->fontComboBox->font().toString());
+    set.setValue("font", ui->fontComboBox->currentFont().toString());
     set.setValue("color", ui->colorPushButton->text());
     set.setValue("sizemin", ui->sizeMinDoubleSpinBox->value());
     set.setValue("sizemax", ui->sizeMaxDoubleSpinBox->value());
