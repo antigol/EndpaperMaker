@@ -11,8 +11,12 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        widget.cpp
+        widget.cpp \
+    endpaperthread.cpp
 
-HEADERS  += widget.h
+HEADERS  += widget.h \
+    endpaperthread.h
 
 FORMS    += widget.ui
+
+

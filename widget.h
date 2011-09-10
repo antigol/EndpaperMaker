@@ -2,6 +2,8 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QProgressDialog>
+#include "endpaperthread.h"
 
 namespace Ui {
     class Widget;
@@ -17,14 +19,24 @@ public:
 
 public slots:
     void print();
+    void cancel();
+
+private slots:
+    void threadprogress(int);
+    void finish();
 
 private:
     void connexions();
-    qreal random(qreal min, qreal max);
     void loaddef();
     void savedef();
 
     Ui::Widget *ui;
+
+    QProgressDialog *_progressDialog;
+    EndpaperThread *_thread;
+
+    QPrinter _printer;
+    QPainter _painter;
 };
 
 #endif // WIDGET_H

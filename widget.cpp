@@ -12,11 +12,15 @@
 #include <QSettings>
 #include <QMessageBox>
 
+
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget)
 {
     ui->setupUi(this);
+
+    _progressDialog = new QProgressDialog("Operation in progress.", "Cancel", 0, 0, this);
+    _thread = new EndpaperThread(this);
 
     connexions();
 
@@ -34,84 +38,41 @@ Widget::~Widget()
 
 void Widget::print()
 {
-    QPrinter printer;
-    QPainter painter;
-
-    QPrintDialog dialog(&printer, this);
+    QPrintDialog dialog(&_printer, this);
     if (dialog.exec() == QDialog::Accepted) {
-        setDisabled(true);
+        _progressDialog->setLabelText("Operation in progress.");
+        _progressDialog->show();
 
-
-        QRectF pageRect = printer.pageRect();
-        QGraphicsScene scene(pageRect);
-
-        QString text(ui->textLineEdit->text());
-        QFont font(ui->fontComboBox->font());
-
-        QGraphicsTextItem *item;
-
-        int stop = 0;
-        bool ok;
-
-
-        while (stop < 300) {
-            // création du texte (taille et font)
-            qreal textSize = random(ui->sizeMinDoubleSpinBox->value(), ui->sizeMaxDoubleSpinBox->value());
-            font.setPointSizeF(textSize);
-
-            item = scene.addText(text, font);
-
-            for (int i = 0; i < 100; ++i) {
-                // positionnement du texte (position et rotation)
-                item->setPos(random(pageRect.left(), pageRect.right()),
-                           random(pageRect.top(), pageRect.bottom()));
-
-
-                item->setRotation(random(ui->angleMinDoubleSpinBox->value(), ui->angleMaxDoubleSpinBox->value()));
-
-                // verification de collision
-
-                ok = item->collidingItems().isEmpty();
-
-                if (ok) {
-
-                    stop = 0;
-
-                    break;
-                }
-            }
-
-            if (!ok) {
-                scene.removeItem(item);
-
-                stop++;
-            }
-
-
-        }
-
-
-        painter.begin(&printer);
-
-        scene.render(&painter);
-
-        painter.end();
-
-        QMessageBox::information(this, "Finish", "Finish");
-        setEnabled(true);
+        // start thread...
+        _thread->start(&_printer, &_painter, ui->textLineEdit->text(), ui->fontComboBox->font(),
+                       ui->sizeMinDoubleSpinBox->value(), ui->sizeMaxDoubleSpinBox->value(),
+                       ui->angleMinDoubleSpinBox->value(), ui->angleMaxDoubleSpinBox->value());
     }
+}
+
+void Widget::cancel()
+{
+    _thread->stop();
+}
+
+void Widget::threadprogress(int value)
+{
+    _progressDialog->setLabelText(QString("Operation in progress: %1").arg(value));
+}
+
+void Widget::finish()
+{
+    _progressDialog->hide();
+    QMessageBox::information(this, "Finish", "Finish");
 }
 
 void Widget::connexions()
 {
     connect(ui->printPushButton, SIGNAL(clicked()), this, SLOT(print()));
-}
 
-qreal Widget::random(qreal min, qreal max)
-{
-    qreal ret = (qreal)rand() / (qreal)RAND_MAX;
-
-    return ret * (max - min) + min;
+    connect(_thread, SIGNAL(finished()), this, SLOT(finish()));
+    connect(_thread, SIGNAL(progress(int)), this, SLOT(threadprogress(int)));
+    connect(_progressDialog, SIGNAL(canceled()), this, SLOT(cancel()));
 }
 
 void Widget::loaddef()
@@ -141,3 +102,6 @@ void Widget::savedef()
     set.setValue("anglemin", ui->angleMinDoubleSpinBox->value());
     set.setValue("anglemax", ui->angleMaxDoubleSpinBox->value());
 }
+
+
+
