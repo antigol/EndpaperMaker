@@ -25,6 +25,7 @@ private slots:
     void threadprogress(int);
     void finish();
 
+    void fontClicked(const QFont &font);
     void colorClicked();
 
 private:

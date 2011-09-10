@@ -69,6 +69,7 @@ void Widget::finish()
 
 void Widget::connexions()
 {
+    connect(ui->fontComboBox, SIGNAL(currentFontChanged(QFont)), this, SLOT(fontClicked(QFont)));
     connect(ui->colorPushButton, SIGNAL(clicked()), this, SLOT(colorClicked()));
     connect(ui->printPushButton, SIGNAL(clicked()), this, SLOT(print()));
 
@@ -107,6 +108,11 @@ void Widget::savedef()
     set.setValue("anglemax", ui->angleMaxDoubleSpinBox->value());
 }
 
+void Widget::fontClicked(const QFont &font)
+{
+    ui->textLineEdit->setFont(font);
+}
+
 void Widget::colorClicked()
 {
     QColorDialog cd(ui->colorPushButton->text(), this);
@@ -115,3 +121,4 @@ void Widget::colorClicked()
         ui->colorPushButton->setText(cd.currentColor().name());
     }
 }
+
