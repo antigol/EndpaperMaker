@@ -15,7 +15,7 @@ signals:
     void progress(int value);
 
 public slots:
-    void start(QPrinter *printer, QPainter *painter, QString text, QFont font, qreal textSize1, qreal textSize2, qreal textAngle1, qreal textAngle2);
+    void start(QPrinter *printer, QPainter *painter, const QString &text, const QFont &font, const QColor &color, qreal textSize1, qreal textSize2, qreal textAngle1, qreal textAngle2);
     void stop();
 
 private:
@@ -25,6 +25,7 @@ private:
     QPainter *_painter;
     QString _text;
     QFont _font;
+    QColor _color;
     qreal _textSize1;
     qreal _textSize2;
     qreal _textAngle1;

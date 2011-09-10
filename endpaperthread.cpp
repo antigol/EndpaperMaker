@@ -22,16 +22,17 @@ void EndpaperThread::run()
     pageRect.setLeft(pageRect.left() - pageRect.width() * 0.2);
 
 
-    QGraphicsTextItem *item;
+    QGraphicsSimpleTextItem *item;
 
-    QList<QGraphicsItem *> shapeList;
+    QList<const QGraphicsItem *> itemList;
+//    QList<QPainterPath> shapeList;
 
     int value = 0;
     int stop = 0;
     bool ok;
 
 
-    while (stop < 300) {
+    while (stop < 400) {
         if (_stop)
             break;
 
@@ -39,9 +40,11 @@ void EndpaperThread::run()
         qreal textSize = random(_textSize1, _textSize2);
         _font.setPointSizeF(textSize);
 
-        item = scene.addText(_text, _font);
+        item = scene.addSimpleText(_text, _font);
+        item->setFlag(QGraphicsItem::ItemClipsToShape);
+        item->setBrush(QBrush(_color));
 
-        for (int i = 0; i < 100; ++i) {
+        for (int i = 0; i < 200; ++i) {
             // positionnement du texte (position et rotation)
             item->setPos(random(pageRect.left(), pageRect.right()),
                        random(pageRect.top(), pageRect.bottom()));
@@ -52,14 +55,17 @@ void EndpaperThread::run()
             // verification de collision
 
             // crée le shape de l'objet actuel
-//                QPainterPath shape = item->shape();
-//                shape.moveTo(item->pos());
+//            QPainterPath shape = item->shape();
 
             ok = true;
 
             // cherche une intersection
-            for (int i = 0; i < shapeList.size(); ++i) {
-                if (item->collidesWithItem(shapeList[i])) {
+            for (int i = 0; i < itemList.size(); ++i) {
+
+
+                if (item->collidesWithItem(itemList[i])) {
+
+//                if (item->collidesWithPath(item->mapFromItem(itemList[i], shapeList[i]))) {
                     ok = false;
                     break;
                 }
@@ -68,7 +74,8 @@ void EndpaperThread::run()
             if (ok) {
 
                 // s'il n'y a pas d'intersection, on ajoute le shape dans la liste et on quitte la boucle
-                shapeList.append(item);
+                itemList.append(item);
+//                shapeList.append(item->shape());
 
                 emit progress(++value);
 
@@ -96,12 +103,13 @@ void EndpaperThread::run()
     _painter->end();
 }
 
-void EndpaperThread::start(QPrinter *printer, QPainter *painter, QString text, QFont font, qreal textSize1, qreal textSize2, qreal textAngle1, qreal textAngle2)
+void EndpaperThread::start(QPrinter *printer, QPainter *painter, const QString &text, const QFont &font, const QColor &color, qreal textSize1, qreal textSize2, qreal textAngle1, qreal textAngle2)
 {
     _printer = printer;
     _painter = painter;
     _text = text;
     _font = font;
+    _color = color;
     _textSize1 = textSize1;
     _textSize2 = textSize2;
     _textAngle1 = textAngle1;

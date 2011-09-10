@@ -25,6 +25,8 @@ private slots:
     void threadprogress(int);
     void finish();
 
+    void colorClicked();
+
 private:
     void connexions();
     void loaddef();

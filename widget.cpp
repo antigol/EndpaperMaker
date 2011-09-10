@@ -11,6 +11,7 @@
 #include <QDebug>
 #include <QSettings>
 #include <QMessageBox>
+#include <QColorDialog>
 
 
 Widget::Widget(QWidget *parent) :
@@ -44,7 +45,7 @@ void Widget::print()
         _progressDialog->show();
 
         // start thread...
-        _thread->start(&_printer, &_painter, ui->textLineEdit->text(), ui->fontComboBox->font(),
+        _thread->start(&_printer, &_painter, ui->textLineEdit->text(), ui->fontComboBox->font(), ui->colorPushButton->text(),
                        ui->sizeMinDoubleSpinBox->value(), ui->sizeMaxDoubleSpinBox->value(),
                        ui->angleMinDoubleSpinBox->value(), ui->angleMaxDoubleSpinBox->value());
     }
@@ -68,6 +69,7 @@ void Widget::finish()
 
 void Widget::connexions()
 {
+    connect(ui->colorPushButton, SIGNAL(clicked()), this, SLOT(colorClicked()));
     connect(ui->printPushButton, SIGNAL(clicked()), this, SLOT(print()));
 
     connect(_thread, SIGNAL(finished()), this, SLOT(finish()));
@@ -83,6 +85,7 @@ void Widget::loaddef()
 
     ui->textLineEdit->setText(set.value("text", "Title").toString());
     ui->fontComboBox->setFont(QFont(set.value("font").toString()));
+    ui->colorPushButton->setText(set.value("color", "#000000").toString());
     ui->sizeMinDoubleSpinBox->setValue(set.value("sizemin", 10).toDouble());
     ui->sizeMaxDoubleSpinBox->setValue(set.value("sizemax", 50).toDouble());
     ui->angleMinDoubleSpinBox->setValue(set.value("anglemin", -70).toDouble());
@@ -97,11 +100,18 @@ void Widget::savedef()
 
     set.setValue("text", ui->textLineEdit->text());
     set.setValue("font", ui->fontComboBox->font().toString());
+    set.setValue("color", ui->colorPushButton->text());
     set.setValue("sizemin", ui->sizeMinDoubleSpinBox->value());
     set.setValue("sizemax", ui->sizeMaxDoubleSpinBox->value());
     set.setValue("anglemin", ui->angleMinDoubleSpinBox->value());
     set.setValue("anglemax", ui->angleMaxDoubleSpinBox->value());
 }
 
+void Widget::colorClicked()
+{
+    QColorDialog cd(ui->colorPushButton->text(), this);
 
-
+    if (cd.exec() == QDialog::Accepted) {
+        ui->colorPushButton->setText(cd.currentColor().name());
+    }
+}
