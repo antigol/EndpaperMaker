@@ -64,7 +64,7 @@ void Widget::threadprogress(int value)
 void Widget::finish()
 {
     _progressDialog->hide();
-    QMessageBox::information(this, "Finish", "Finish");
+//    QMessageBox::information(this, "Finish", "Finish");
 }
 
 void Widget::connexions()
