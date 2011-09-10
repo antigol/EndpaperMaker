@@ -4,6 +4,9 @@
 #
 #-------------------------------------------------
 
+macx:ICON = iconmac.icns
+
+
 QT       += core gui
 
 TARGET = EndpaperMaker
