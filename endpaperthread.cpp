@@ -1,6 +1,7 @@
 #include "endpaperthread.h"
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QStringList>
 
 qreal random(qreal min, qreal max)
 {
@@ -21,6 +22,11 @@ void EndpaperThread::run()
     pageRect.setTop(pageRect.top() - pageRect.height() * 0.2);
     pageRect.setLeft(pageRect.left() - pageRect.width() * 0.2);
 
+    QStringList textList = _text.split(',');
+    for (int i = 0; i < textList.size(); ++i) {
+        textList[i] = textList[i].trimmed();
+    }
+
 
     QGraphicsSimpleTextItem *item;
 
@@ -40,7 +46,7 @@ void EndpaperThread::run()
         qreal textSize = random(_textSize1, _textSize2);
         _font.setPointSizeF(textSize);
 
-        item = scene.addSimpleText(_text, _font);
+        item = scene.addSimpleText(textList.at(rand() % textList.size()), _font);
         item->setFlag(QGraphicsItem::ItemClipsToShape);
         item->setBrush(QBrush(_color));
 
