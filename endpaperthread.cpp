@@ -17,89 +17,85 @@ EndpaperThread::EndpaperThread(QObject *parent) :
 
 void EndpaperThread::run()
 {
+    // zone de la page
     QRectF pageRect = _printer->pageRect();
+
     QGraphicsScene scene(pageRect);
+
+    // dépassement de la page à gauche et en haut, pour laisser des mots dépasser
     pageRect.setTop(pageRect.top() - pageRect.height() * 0.2);
     pageRect.setLeft(pageRect.left() - pageRect.width() * 0.2);
 
+    // découpage de le liste des mots par les virgules
     QStringList textList = _text.split(',');
+
     for (int i = 0; i < textList.size(); ++i) {
         textList[i] = textList[i].trimmed();
     }
 
-
+    // pointeur de l'objet courrant
     QGraphicsSimpleTextItem *item;
 
+    // liste des objet rajoutés
     QList<const QGraphicsItem *> itemList;
-//    QList<QPainterPath> shapeList;
 
-    int value = 0;
-    int stop = 0;
+    int wordsAmount = 0;
+    int tryCounter = 0;
     bool ok;
 
 
-    while (stop < 400) {
+    while (tryCounter < 300) {
         if (_stop)
             break;
 
-        // création du texte (taille et font)
-        qreal textSize = random(_textSize1, _textSize2);
-        _font.setPointSizeF(textSize);
+        // création du texte
+        _font.setPointSizeF(random(_textSize1, _textSize2));
 
         item = scene.addSimpleText(textList.at(rand() % textList.size()), _font);
-        item->setFlag(QGraphicsItem::ItemClipsToShape);
+
+        //item->setFlag(QGraphicsItem::ItemClipsToShape);
         item->setBrush(QBrush(_color));
+        item->setRotation(random(_textAngle1, _textAngle2));
 
-        for (int i = 0; i < 200; ++i) {
-            // positionnement du texte (position et rotation)
+
+        // boucle de positionnement du texte
+        for (int i = 0; i < 500; ++i) {
+            // positionnement du texte
             item->setPos(random(pageRect.left(), pageRect.right()),
-                       random(pageRect.top(), pageRect.bottom()));
-
-
-            item->setRotation(random(_textAngle1, _textAngle2));
+                         random(pageRect.top(), pageRect.bottom()));
 
             // verification de collision
-
-            // crée le shape de l'objet actuel
-//            QPainterPath shape = item->shape();
-
             ok = true;
 
             // cherche une intersection
             for (int i = 0; i < itemList.size(); ++i) {
-
-
                 if (item->collidesWithItem(itemList[i])) {
-
-//                if (item->collidesWithPath(item->mapFromItem(itemList[i], shapeList[i]))) {
                     ok = false;
                     break;
                 }
             }
 
             if (ok) {
-
-                // s'il n'y a pas d'intersection, on ajoute le shape dans la liste et on quitte la boucle
+                // s'il n'y a pas d'intersection, on ajoute l'objet dans la liste et on quitte la boucle
                 itemList.append(item);
-//                shapeList.append(item->shape());
 
-                emit progress(++value);
-
-                stop = 0;
+                emit progress(++wordsAmount);
+                tryCounter = 0;
 
                 break;
             }
-        } // for (int i = 0; i < 100; ++i)
+        } // fin de la boucle de positionnement du texte
+
 
         if (!ok) {
             // si on a quitté la boucle acause de la fin de la boucle for, on supprime l'objet et on r'essaye avec une autre taille
 
             scene.removeItem(item);
 
-            stop++;
+            tryCounter++;
         }
 
-    } // while (stop < 300)
+    } // while (tryCounter < 300)
 
 
     _painter->begin(_printer);

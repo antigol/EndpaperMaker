@@ -39,6 +39,8 @@ Widget::~Widget()
 
 void Widget::print()
 {
+    _printer.setDocName(ui->textLineEdit->text());
+
     QPrintDialog dialog(&_printer, this);
     if (dialog.exec() == QDialog::Accepted) {
         _progressDialog->setLabelText("Operation in progress.");
@@ -64,7 +66,6 @@ void Widget::threadprogress(int value)
 void Widget::finish()
 {
     _progressDialog->hide();
-//    QMessageBox::information(this, "Finish", "Finish");
 }
 
 void Widget::connexions()
