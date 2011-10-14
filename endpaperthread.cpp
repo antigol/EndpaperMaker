@@ -107,6 +107,9 @@ void EndpaperThread::run()
 
 void EndpaperThread::start(QPrinter *printer, QPainter *painter, const QString &text, const QFont &font, const QColor &color, qreal textSize1, qreal textSize2, qreal textAngle1, qreal textAngle2)
 {
+    if (isRunning())
+        return;
+
     _printer = printer;
     _painter = painter;
     _text = text;

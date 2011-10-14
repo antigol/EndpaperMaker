@@ -21,6 +21,7 @@ Widget::Widget(QWidget *parent) :
     ui->setupUi(this);
 
     _progressDialog = new QProgressDialog("Operation in progress.", "Print now!", 0, 0, this);
+    _progressDialog->setWindowModality(Qt::WindowModal);
     _thread = new EndpaperThread(this);
 
     connexions();
@@ -32,6 +33,10 @@ Widget::~Widget()
 {
     savedef();
 
+    _thread->stop();
+    _thread->wait();
+
+    delete _progressDialog;
     delete ui;
 }
 
