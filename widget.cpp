@@ -71,6 +71,7 @@ void Widget::connexions()
     connect(ui->fontComboBox, SIGNAL(currentFontChanged(QFont)), this, SLOT(fontClicked(QFont)));
     connect(ui->colorPushButton, SIGNAL(clicked()), this, SLOT(colorClicked()));
     connect(ui->printPushButton, SIGNAL(clicked()), this, SLOT(print()));
+    connect(ui->exitPushButton, SIGNAL(clicked()), qApp, SLOT(quit()));
 
     connect(_thread, SIGNAL(finished()), this, SLOT(finish()));
     connect(_thread, SIGNAL(progress(int)), this, SLOT(threadprogress(int)));
