@@ -7,5 +7,6 @@ int main(int argc, char *argv[])
     Widget w;
     w.show();
 
+    srand(a.applicationPid());
     return a.exec();
 }

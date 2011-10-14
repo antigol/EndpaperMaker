@@ -26,8 +26,6 @@ Widget::Widget(QWidget *parent) :
     connexions();
 
     loaddef();
-
-    srand(time(0));
 }
 
 Widget::~Widget()
